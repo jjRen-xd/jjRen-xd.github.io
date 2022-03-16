@@ -28,6 +28,33 @@
     </entry>
     
     
+    
+    <entry>
+      <title>文章介绍</title>
+      <link href="/2018/09/07/shi-li/"/>
+      <url>/2018/09/07/shi-li/</url>
+      
+        <content type="html"><![CDATA[<p>主题使用指南：<a href="https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md">https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md</a></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Markdown </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Typora </tag>
+            
+            <tag> Markdown </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
