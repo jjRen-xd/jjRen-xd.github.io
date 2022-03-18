@@ -38,11 +38,38 @@
   </entry>
   
   <entry>
-    <title>遥感数据集整理</title>
-    <link href="http://jjren-xd.github.io/2021/12/06/yao-gan-shu-ju-ji-zheng-li/"/>
-    <id>http://jjren-xd.github.io/2021/12/06/yao-gan-shu-ju-ji-zheng-li/</id>
-    <published>2021-12-06T03:28:30.377Z</published>
-    <updated>2022-03-15T14:47:18.726Z</updated>
+    <title>ZerotTier内网穿透+VSCode配置远程开发+tmux基础操作</title>
+    <link href="http://jjren-xd.github.io/2021/11/11/zerotier-nei-wang-chuan-tou-vscode-pei-zhi-yuan-cheng-kai-fa-tmux-ji-chu-cao-zuo/"/>
+    <id>http://jjren-xd.github.io/2021/11/11/zerotier-nei-wang-chuan-tou-vscode-pei-zhi-yuan-cheng-kai-fa-tmux-ji-chu-cao-zuo/</id>
+    <published>2021-11-11T07:06:13.000Z</published>
+    <updated>2022-03-18T06:18:27.786Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;ZerotTier内网穿透-VSCode配置远程开发-tmux基础操作&quot;&gt;&lt;a href=&quot;#ZerotTier内网穿透-VSCode配置远程开发-tmux基础操作&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+    <category term="内网穿透" scheme="http://jjren-xd.github.io/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/"/>
+    
+    <category term="tmux" scheme="http://jjren-xd.github.io/tags/tmux/"/>
+    
+    <category term="远程开发" scheme="http://jjren-xd.github.io/tags/%E8%BF%9C%E7%A8%8B%E5%BC%80%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>遥感常用数据集介绍</title>
+    <link href="http://jjren-xd.github.io/2020/12/07/yao-gan-shu-ju-ji-zheng-li/"/>
+    <id>http://jjren-xd.github.io/2020/12/07/yao-gan-shu-ju-ji-zheng-li/</id>
+    <published>2020-12-07T06:34:43.000Z</published>
+    <updated>2022-03-18T06:14:07.922Z</updated>
     
     
       
@@ -63,7 +90,7 @@
     <link href="http://jjren-xd.github.io/2018/09/07/shi-li/"/>
     <id>http://jjren-xd.github.io/2018/09/07/shi-li/</id>
     <published>2018-09-07T01:25:00.000Z</published>
-    <updated>2022-03-16T07:55:26.858Z</updated>
+    <updated>2022-03-18T05:30:48.995Z</updated>
     
     
       
