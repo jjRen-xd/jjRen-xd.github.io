@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>jjRen&#39; Blog</title>
+  <title>JJ_Ren&#39; Blog</title>
   
-  <subtitle>jjRen の Blog</subtitle>
+  <subtitle>JJ_Ren の Blog</subtitle>
   <link href="http://jjren-xd.github.io/atom.xml" rel="self"/>
   
   <link href="http://jjren-xd.github.io/"/>
@@ -10,7 +10,7 @@
   <id>http://jjren-xd.github.io/</id>
   
   <author>
-    <name>jjRen</name>
+    <name>JJ_Ren</name>
     
   </author>
   
