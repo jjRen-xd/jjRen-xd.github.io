@@ -6,7 +6,7 @@
   <link href="http://jjren-xd.github.io/atom.xml" rel="self"/>
   
   <link href="http://jjren-xd.github.io/"/>
-  <updated>2022-04-02T13:11:27.535Z</updated>
+  <updated>2022-04-12T02:30:25.597Z</updated>
   <id>http://jjren-xd.github.io/</id>
   
   <author>
@@ -18,10 +18,73 @@
   
   <entry>
     <title></title>
+    <link href="http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/"/>
+    <id>http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/</id>
+    <published>2022-04-12T02:13:09.548Z</published>
+    <updated>2022-04-12T02:30:25.597Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;轻松掌握-MMDetection-中常用算法-二-：Faster-R-CNN-Mask-R-CNN&quot;&gt;&lt;a href=&quot;#轻松掌握-MMDetection-中常用算法-二-：Faster-R-CNN-Mask-R-CNN&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-3-gou-jian-retinanet-ji-pei-zhi/"/>
+    <id>http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-3-gou-jian-retinanet-ji-pei-zhi/</id>
+    <published>2022-04-05T08:01:33.080Z</published>
+    <updated>2022-04-12T02:13:54.079Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;轻松掌握-MMDetection-中常用算法-一-：RetinaNet-及配置详解&quot;&gt;&lt;a href=&quot;#轻松掌握-MMDetection-中常用算法-一-：RetinaNet-及配置详解&quot; class=&quot;headerlink&quot; title=&quot;轻松掌握</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/"/>
+    <id>http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/</id>
+    <published>2022-04-05T06:03:02.122Z</published>
+    <updated>2022-04-11T02:44:57.844Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;轻松掌握-MMDetection-整体构建流程-二&quot;&gt;&lt;a href=&quot;#轻松掌握-MMDetection-整体构建流程-二&quot; class=&quot;headerlink&quot; title=&quot;轻松掌握 MMDetection 整体构建流程(二)&quot;&gt;&lt;/a&gt;轻松掌握</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
     <link href="http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/"/>
     <id>http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/</id>
     <published>2022-04-02T07:41:51.942Z</published>
-    <updated>2022-04-02T13:11:27.535Z</updated>
+    <updated>2022-04-11T02:40:10.844Z</updated>
     
     
       

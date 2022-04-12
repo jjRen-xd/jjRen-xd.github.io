@@ -5,14 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="JJ_Ren&#39; Blog">
-    <meta name="description" content="轻松掌握 MMDetection 整体构建流程(一)0 涉及内容
-MMDetection整体构建流程与思想
-目标检测算法核心组件划分
-目标检测核心组件功能
-
-1 目标检测算法抽象流程目前目标检测算法大致归纳如下：
-
-目标检测算法可以按照 3">
+    <meta name="description" content="轻松掌握 MMDetection 整体构建流程(二)0 内容概览上一节中，重点分析了 MMDetection 框架中 Model 整体构建流程，但仅对 Model 算法组件方面进行深入分析，并未涉及整个框架训练和测试流程。
+本文核心内容是按">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -553,7 +547,7 @@ MMDetection整体构建流程与思想
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-04-02
+                    2022-04-05
                 </div>
                 
 
@@ -567,14 +561,14 @@ MMDetection整体构建流程与思想
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.2k
+                    3.5k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    12 分
+                    13 分
                 </div>
                 
 
@@ -597,251 +591,258 @@ MMDetection整体构建流程与思想
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="轻松掌握-MMDetection-整体构建流程-一"><a href="#轻松掌握-MMDetection-整体构建流程-一" class="headerlink" title="轻松掌握 MMDetection 整体构建流程(一)"></a>轻松掌握 MMDetection 整体构建流程(一)</h1><h2 id="0-涉及内容"><a href="#0-涉及内容" class="headerlink" title="0 涉及内容"></a>0 涉及内容</h2><ul>
-<li>MMDetection整体构建流程与思想</li>
-<li>目标检测算法核心组件划分</li>
-<li>目标检测核心组件功能</li>
-</ul>
-<h2 id="1-目标检测算法抽象流程"><a href="#1-目标检测算法抽象流程" class="headerlink" title="1 目标检测算法抽象流程"></a>1 目标检测算法抽象流程</h2><p>目前目标检测算法大致归纳如下：</p>
-<p><img src="https://pic1.zhimg.com/80/v2-23f3f33d5ed5792e7ad55e559a6798fc_720w.jpg" alt="img"></p>
-<p>目标检测算法可以按照 3 个维度划分：</p>
+                <h1 id="轻松掌握-MMDetection-整体构建流程-二"><a href="#轻松掌握-MMDetection-整体构建流程-二" class="headerlink" title="轻松掌握 MMDetection 整体构建流程(二)"></a>轻松掌握 MMDetection 整体构建流程(二)</h1><h2 id="0-内容概览"><a href="#0-内容概览" class="headerlink" title="0 内容概览"></a>0 内容概览</h2><p>上一节中，重点分析了 MMDetection 框架中 Model 整体构建流程，但仅对 Model 算法组件方面进行深入分析，并未涉及整个框架训练和测试流程。</p>
+<p>本文核心内容是<strong>按照抽象到具体方式，从多个层次进行训练和测试流程深入解析</strong>，<strong>从最抽象层讲起，到最后核心代码实现</strong>，帮助理解 MMDetection 开源框架整体构建细节。</p>
+<h2 id="1-第一层整体抽象"><a href="#1-第一层整体抽象" class="headerlink" title="1 第一层整体抽象"></a>1 第一层整体抽象</h2><p><img src="https://pic2.zhimg.com/80/v2-2463639f7e39afd273fdeccbfa530d49_720w.jpg" alt="img"></p>
 <ul>
-<li><p><strong>按照 stage 个数划分</strong>，常规是 one-stage 和 two-stage，但是实际上界限不是特别清晰，例如带 refine 阶段的算法 RepPoints，实际上可以认为是1.5 stage 算法，而 Cascade R-CNN 可以认为是多阶段算法，为了简单，上面图示没有划分如此细致。</p>
-</li>
-<li><p><strong>按照是否需要预定义 anchor 划分</strong>，常规是 anchor-based 和 anchor-free，当然也有些算法是两者混合的。</p>
-</li>
-<li><p><strong>按照是否采用了 transformer 结构划分</strong>，目前基于 transformer 结构的目标检测算法发展迅速，也引起了极大的关注，所以这里特意增加了这个类别的划分</p>
-</li>
+<li>上图为 MMDetection 框架整体训练和测试抽象流程图。按照数据流过程，<strong>训练流程可以简单总结为</strong>：</li>
 </ul>
-<h2 id="2-MMDetection整体构建流程与思想"><a href="#2-MMDetection整体构建流程与思想" class="headerlink" title="2 MMDetection整体构建流程与思想"></a>2 MMDetection整体构建流程与思想</h2><p>基于目前代码实现，所有目标检测算法都按照以下流程进行划分：<img src="https://pic1.zhimg.com/80/v2-7ecc8e5e19c59a3e6682c5e3cdc34918_720w.jpg" alt="img"></p>
-<p>上述流程对应 MMDetection 代码构建流程，理解每个组件的作用不仅仅对阅读算法源码有帮助，而且还能够快速理解新提出算法对应的改进部分。下面对每个模块进行详细解读。</p>
-<h3 id="2-1-训练核心组件"><a href="#2-1-训练核心组件" class="headerlink" title="2.1 训练核心组件"></a>2.1 训练核心组件</h3><p>训练部分一般包括 9 个核心组件，总体流程是：</p>
 <ol>
-<li>任何一个 batch 的图片先输入到 <strong>backbone 中进行特征提取</strong>，典型的骨干网络是 <strong>ResNet</strong>。</li>
-<li>输出的单尺度或者多尺度特征图输入到 <strong>neck 模块中进行特征融合或者增强</strong>，典型的 neck 是 <strong>FPN</strong>。</li>
-<li>上述多尺度特征最终输入到 <strong>head 部分</strong>，一般都会包括<strong>分类和回归</strong>分支输出。</li>
-<li>在整个<strong>网络构建阶段</strong>都可以引入一些即插即用<strong>增强算子</strong>来增加提取提取能力，典型的例如 <strong>SPP、DCN</strong> 等等。</li>
-<li>目标检测 <strong>head 输出一般是特征图</strong>，对于分类任务存在严重的正负样本不平衡，可以通过正负样本<strong>属性分配和采样</strong>控制。</li>
-<li>为了方便收敛和平衡多分支，一般都会<strong>对 gt bbox 进行编码</strong>。</li>
-<li>最后一步是<strong>计算分类和回归 loss</strong>，进行训练。</li>
-<li>在训练过程中也包括非常多的 <strong>trick</strong>，例如优化器选择等，参数调节也非常关键</li>
+<li>给定任何一个数据集，首先需要<strong>构建 Dataset 类</strong>，用于迭代输出数据。</li>
+<li>在迭代输出数据的时候需要通过数据 Pipeline <strong>对数据进行各种处理</strong>，最典型的处理流是训练中的<strong>数据增强</strong>操作，测试中的数据预处理等等。</li>
+<li><strong>通过 Sampler 采样器可以控制 Dataset 输出的数据顺序</strong>，最常用的是随机采样器 RandomSampler。由于 Dataset 中输出的图片大小不一样，<strong>为了尽可能减少后续组成 batch 时 pad 的像素个数，MMDetection 引入了分组采样器 GroupSampler</strong> 和 DistributedGroupSampler，相当于在 RandomSampler 基础上额外新增了根据图片宽高比进行 group 功能。</li>
+<li><strong>将 Sampler 和 Dataset 都输入给 DataLoader</strong>，然后通过 DataLoader 输出已组成 batch 的数据，作为 Model 的输入。</li>
+<li>对于任何一个 Model，<strong>为了方便处理数据流以及分布式需求</strong>，MMDetection 引入了两个 Model 的上层封装：<strong>单机版本 MMDataParallel</strong>、<strong>分布式（单机多卡或多机多卡）版本 MMDistributedDataParallel</strong>。</li>
+<li>Model 运行后会输出 <strong>loss 以及其他一些信息，会通过 logger 进行保存或者可视化</strong>。</li>
+<li>为了更好地解耦， 方便地获取各个组件之间依赖和灵活扩展，MMDetection <strong>引入了 Runner 类进行全生命周期管理</strong>，并且通过 <strong>Hook 方便的获取</strong>、修改和拦截任何生命周期数据流，扩展非常便捷。</li>
 </ol>
-<p>注意上述 9 个组件不是每个算法都需要的，下面详细分析。</p>
-<h4 id="2-1-1-Backbone"><a href="#2-1-1-Backbone" class="headerlink" title="2.1.1 Backbone"></a>2.1.1 Backbone</h4><p><strong>backbone 作用主要是特征提取</strong>，最常用的是 ResNet 系列、ResNetV1d 系列和 Res2Net 系列。</p>
-<p><img src="https://pic2.zhimg.com/80/v2-cdee2bd9f289d650ddbcbd748c4be0f9_720w.jpg" alt="img"></p>
-<p>目前 MMDetection 中已经集成了大部分骨架网络，具体见文件：<code>mmdet/models/backbones</code>，V2.7 已经实现的骨架如下：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'RegNet'</span><span class="token punctuation">,</span> <span class="token string">'ResNet'</span><span class="token punctuation">,</span> <span class="token string">'ResNetV1d'</span><span class="token punctuation">,</span> <span class="token string">'ResNeXt'</span><span class="token punctuation">,</span> <span class="token string">'SSDVGG'</span><span class="token punctuation">,</span> <span class="token string">'HRNet'</span><span class="token punctuation">,</span> <span class="token string">'Res2Net'</span><span class="token punctuation">,</span>
-    <span class="token string">'HourglassNet'</span><span class="token punctuation">,</span> <span class="token string">'DetectoRS_ResNet'</span><span class="token punctuation">,</span> <span class="token string">'DetectoRS_ResNeXt'</span><span class="token punctuation">,</span> <span class="token string">'Darknet'</span><span class="token punctuation">,</span>
-    <span class="token string">'ResNeSt'</span><span class="token punctuation">,</span> <span class="token string">'TridentResNet'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>而<strong>测试流程</strong>就比较简单了，直接对 DataLoader 输出的数据进行前向推理即可，还原到最终原图尺度过程也是在 Model 中完成。</li>
+</ul>
+<p>以上就是 MMDetection 框架整体训练和测试抽象流程，上图不仅仅反映了训练和测试数据流，而且还包括了模块和模块之间的调用关系。<strong>对于训练而言，最核心部分应该是 Runner，理解了 Runner 的运行流程，也就理解了整个 MMDetection 数据流。</strong></p>
+<h2 id="2-第二层模块抽象"><a href="#2-第二层模块抽象" class="headerlink" title="2 第二层模块抽象"></a>2 第二层模块抽象</h2><p>在总体把握了整个 MMDetection 框架训练和测试流程后，下个层次是每个模块内部抽象流程，主要包括 <strong>Pipeline、DataParallel、Model、Runner 和 Hooks。</strong></p>
+<h3 id="2-1-Pipeline"><a href="#2-1-Pipeline" class="headerlink" title="2.1 Pipeline"></a>2.1 Pipeline</h3><p>Pipeline 实际上<strong>由一系列按照插入顺序运行的数据处理模块组成</strong>，每个模块完成某个特定功能，例如 Resize，因为其流式顺序运行特性，故叫做 Pipeline。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-d7eb7e24335613da3da22da4ea93e132_720w.jpg" alt="img"></p>
+<p>上图是一个非常典型的训练流程 Pipeline，<strong>每个类都接收字典输入，输出也是字典，顺序执行</strong>，其中绿色表示该类运行后新增字段，橙色表示对该字段可能会进行修改。如果进一步细分的话，不同算法的 Pipeline 都可以划分为如下部分：</p>
+<ul>
+<li><strong>图片和标签加载</strong>，通常用的类是 LoadImageFromFile 和 LoadAnnotations</li>
+<li><strong>数据前处理</strong>，例如统一 Resize</li>
+<li><strong>数据增强</strong>，典型的例如各种图片几何变换等，这部分是训练流程特有，测试阶段一般不采用(多尺度测试采用其他实现方式)</li>
+<li><strong>数据收集</strong>，例如 Collect</li>
+</ul>
+<p>在 MMDetection 框架中，图片和标签加载和数据后处理流程一般是固定的，<strong>用户主要可能修改的是数据增强步骤</strong>，目前已经接入了第三方增强库 Albumentations，可以按照示例代码轻松构建属于你自己的数据增强 Pipeline。</p>
+<p><strong>在构建自己的 Pipeline 时候一定要仔细检查你修改或者新增的字典 key 和 value，因为一旦你错误地覆盖或者修改原先字典里面的内容，代码也可能不会报错，如果出现 bug，则比较难排查</strong>。</p>
+<h3 id="2-2-DataParallel-和-Model"><a href="#2-2-DataParallel-和-Model" class="headerlink" title="2.2 DataParallel 和 Model"></a>2.2 DataParallel 和 Model</h3><p><strong>在 MMDetection 中 DataLoader 输出的内容不是 pytorch 能处理的标准格式</strong>，还包括了 DataContainer 对象，该对象的作用是包装不同类型的对象使之能按需组成 batch。在目标检测中，每张图片 gt bbox 个数是不一样的，如果想组成 batch tensor，要么你设置最大长度，要么你自己想办法组成 batch。而考虑到内存和效率，<strong>MMDetection 通过引入 DataContainer</strong> 模块来解决上述问题，但是随之带来的问题是 pytorch 无法解析 DataContainer 对象，故需要在 MMDetection 中自行处理。</p>
+<p>解决办法其实非常多，<strong>MMDetection 选择了一种比较优雅的实现方式：MMDataParallel 和 MMDistributedDataParallel。</strong>具体来说，这两个类相比 PyTorch 自带的 DataParallel 和 DistributedDataParallel 区别是：</p>
+<ul>
+<li>可以处理 DataContainer 对象</li>
+<li>额外实现了 <code>train_step()</code> 和 <code>val_step()</code> 两个函数，可以被 Runner 调用</li>
+</ul>
+<p>关于这两个类的具体实现后面会描述。</p>
+<p>而 Model 部分内容就是第一篇解读文章所讲的，具体如下：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-0c8f69636320fb40d8a8cd994296bf87_720w.jpg" alt="img"></p>
+<h3 id="2-3-Runner-和-Hooks"><a href="#2-3-Runner-和-Hooks" class="headerlink" title="2.3 Runner 和 Hooks"></a>2.3 Runner 和 Hooks</h3><p>对于任何一个目标检测算法，都需要包括优化器、学习率设置、权重保存等等组件才能构成完整训练流程，而这些组件是通用的。为了方便 OpenMMLab 体系下的所有框架复用，<strong>在 MMCV 框架中引入了 Runner 类来统一管理训练和验证流程</strong>，并且<strong>通过 Hooks 机制以一种非常灵活、解耦的方式来实现丰富扩展功能</strong>。</p>
+<p>关于 Runner 和 Hooks 详细解读会发布在 MMCV 系列解读文章中，简单来说 <strong>Runner 封装了 OpenMMLab 体系下各个框架的训练和验证详细流程</strong>，其负责管理训练和验证过程中的整个生命周期，<strong>通过预定义回调函数，用户可以插入定制化 Hook ，从而实现各种各样的需求</strong>。下面列出了在 MMDetection 几个非常重要的 hook 以及其作用的生命周期：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-5d614997aa85e1b841457094b7bc0cbb_720w.jpg" alt="img"></p>
+<p>例如 CheckpointHook 在每个训练 epoch 完成后会被调用，从而实现保存权重功能。用户也可以将自己定制实现的 Hook 采用上述方式绘制，对理解整个流程或许有帮助。</p>
+<h2 id="3-第三层代码抽象"><a href="#3-第三层代码抽象" class="headerlink" title="3 第三层代码抽象"></a>3 第三层代码抽象</h2><p>前面两层抽象分析流程，基本上把整个 MMDetection 的训练和测试流程分析完了，下面从具体代码层面进行抽象分析。</p>
+<h3 id="3-1-训练和测试整体代码抽象流程"><a href="#3-1-训练和测试整体代码抽象流程" class="headerlink" title="3.1 训练和测试整体代码抽象流程"></a>3.1 训练和测试整体代码抽象流程</h3><p><img src="https://pic4.zhimg.com/80/v2-b03d43ed4b3dc4c02e68712e57023cff_720w.jpg" alt="img"></p>
+<p>上图为训练和验证的和具体代码相关的整体抽象流程，对应到代码上，其核心代码如下：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#=================== tools/train.py ==================</span>
+<span class="token comment"># 1.初始化配置</span>
+cfg <span class="token operator">=</span> Config<span class="token punctuation">.</span>fromfile<span class="token punctuation">(</span>args<span class="token punctuation">.</span>config<span class="token punctuation">)</span>
 
-<p>如果需要对骨架进行扩展，可以继承上述网络，然后通过<strong>注册器机制</strong>注册使用。一个典型用法为：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># 骨架的预训练权重路径</span>
-pretrained<span class="token operator">=</span><span class="token string">'torchvision://resnet50'</span><span class="token punctuation">,</span>
-backbone<span class="token operator">=</span><span class="token builtin">dict</span><span class="token punctuation">(</span>
-    <span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'ResNet'</span><span class="token punctuation">,</span> <span class="token comment"># 骨架类名，后面的参数都是该类的初始化参数</span>
-    depth<span class="token operator">=</span><span class="token number">50</span><span class="token punctuation">,</span>
-    num_stages<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">,</span>
-    out_indices<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-    frozen_stages<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span>
-    norm_cfg<span class="token operator">=</span><span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'BN'</span><span class="token punctuation">,</span> requires_grad<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
-    norm_eval<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
-    style<span class="token operator">=</span><span class="token string">'pytorch'</span>
-<span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 2.判断是否为分布式训练模式</span>
 
-<p><strong>通过 MMCV 中的注册器机制，你可以通过 dict 形式的配置来实例化任何已经注册的类</strong>，非常方便和灵活。</p>
-<h4 id="2-1-2-Neck"><a href="#2-1-2-Neck" class="headerlink" title="2.1.2 Neck"></a>2.1.2 Neck</h4><p>neck 可以认为<strong>是 backbone 和 head 的连接层</strong>，主要负责对 backbone 的特征进行高效融合和增强，能够对输入的单尺度或者多尺度<strong>特征进行融合、增强输出</strong>等。</p>
-<p><img src="https://pic1.zhimg.com/80/v2-f0975c00a32fa03a80860f9c09234bbc_720w.jpg" alt="img"></p>
-<p>具体见文件：<code>mmdet/models/necks</code>，V2.7 已经实现的 neck 如下：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'FPN'</span><span class="token punctuation">,</span> <span class="token string">'BFP'</span><span class="token punctuation">,</span> <span class="token string">'ChannelMapper'</span><span class="token punctuation">,</span> <span class="token string">'HRFPN'</span><span class="token punctuation">,</span> <span class="token string">'NASFPN'</span><span class="token punctuation">,</span> <span class="token string">'FPN_CARAFE'</span><span class="token punctuation">,</span> <span class="token string">'PAFPN'</span><span class="token punctuation">,</span>
-    <span class="token string">'NASFCOS_FPN'</span><span class="token punctuation">,</span> <span class="token string">'RFP'</span><span class="token punctuation">,</span> <span class="token string">'YOLOV3Neck'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 3.初始化 logger</span>
+logger <span class="token operator">=</span> get_root_logger<span class="token punctuation">(</span>log_file<span class="token operator">=</span>log_file<span class="token punctuation">,</span> log_level<span class="token operator">=</span>cfg<span class="token punctuation">.</span>log_level<span class="token punctuation">)</span>
 
-<p>最常用的应该是 FPN，一个典型用法是：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">neck<span class="token operator">=</span><span class="token builtin">dict</span><span class="token punctuation">(</span>
-    <span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'FPN'</span><span class="token punctuation">,</span>
-    in_channels<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">1024</span><span class="token punctuation">,</span> <span class="token number">2048</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment"># 骨架多尺度特征图输出通道</span>
-    out_channels<span class="token operator">=</span><span class="token number">256</span><span class="token punctuation">,</span> 	<span class="token comment"># 增强后通道输出</span>
-    num_outs<span class="token operator">=</span><span class="token number">5</span>			<span class="token comment"># 输出num_outs个多尺度特征图</span>
-<span class="token punctuation">)</span><span class="token punctuation">,</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 4.收集运行环境并且打印，方便排查硬件和软件相关问题</span>
+env_info_dict <span class="token operator">=</span> collect_env<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-<h4 id="2-1-3-Head"><a href="#2-1-3-Head" class="headerlink" title="2.1.3 Head"></a>2.1.3 Head</h4><p>目标检测算法<strong>输出一般包括分类和框坐标回归</strong>两个分支，不同算法 head 模块复杂程度不一样，灵活度比较高。在网络构建方面，<strong>理解目标检测算法主要是要理解 head 模块</strong>。几乎<strong>每个算法都包括一个独立的 head</strong>。</p>
-<p><img src="https://pic2.zhimg.com/80/v2-fdd9a6232e62c75b143153dab8ba9bc1_720w.jpg" alt="img"></p>
-<p>MMDetection 中 head 模块又划分为 <strong>two-stage 所需的 RoIHead</strong> 和 <strong>one-stage 所需的 DenseHead</strong>，也就是说所有的 one-stage 算法的 head 模块都在<code>mmdet/models/dense_heads</code>中，而 two-stage 算法还包括额外的<code>mmdet/models/roi_heads</code>。</p>
-<p>目前 V2.7 中已经实现的 dense_heads 包括：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'AnchorFreeHead'</span><span class="token punctuation">,</span> <span class="token string">'AnchorHead'</span><span class="token punctuation">,</span> <span class="token string">'GuidedAnchorHead'</span><span class="token punctuation">,</span> <span class="token string">'FeatureAdaption'</span><span class="token punctuation">,</span>
-    <span class="token string">'RPNHead'</span><span class="token punctuation">,</span> <span class="token string">'GARPNHead'</span><span class="token punctuation">,</span> <span class="token string">'RetinaHead'</span><span class="token punctuation">,</span> <span class="token string">'RetinaSepBNHead'</span><span class="token punctuation">,</span> <span class="token string">'GARetinaHead'</span><span class="token punctuation">,</span>
-    <span class="token string">'SSDHead'</span><span class="token punctuation">,</span> <span class="token string">'FCOSHead'</span><span class="token punctuation">,</span> <span class="token string">'RepPointsHead'</span><span class="token punctuation">,</span> <span class="token string">'FoveaHead'</span><span class="token punctuation">,</span>
-    <span class="token string">'FreeAnchorRetinaHead'</span><span class="token punctuation">,</span> <span class="token string">'ATSSHead'</span><span class="token punctuation">,</span> <span class="token string">'FSAFHead'</span><span class="token punctuation">,</span> <span class="token string">'NASFCOSHead'</span><span class="token punctuation">,</span>
-    <span class="token string">'PISARetinaHead'</span><span class="token punctuation">,</span> <span class="token string">'PISASSDHead'</span><span class="token punctuation">,</span> <span class="token string">'GFLHead'</span><span class="token punctuation">,</span> <span class="token string">'CornerHead'</span><span class="token punctuation">,</span> <span class="token string">'YOLACTHead'</span><span class="token punctuation">,</span>
-    <span class="token string">'YOLACTSegmHead'</span><span class="token punctuation">,</span> <span class="token string">'YOLACTProtonet'</span><span class="token punctuation">,</span> <span class="token string">'YOLOV3Head'</span><span class="token punctuation">,</span> <span class="token string">'PAAHead'</span><span class="token punctuation">,</span>
-    <span class="token string">'SABLRetinaHead'</span><span class="token punctuation">,</span> <span class="token string">'CentripetalHead'</span><span class="token punctuation">,</span> <span class="token string">'VFNetHead'</span><span class="token punctuation">,</span> <span class="token string">'TransformerHead'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 5.初始化 model</span>
+model <span class="token operator">=</span> build_detector<span class="token punctuation">(</span>cfg<span class="token punctuation">.</span>model<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
 
-<p>而 roi_heads 比较杂，就不列出了。</p>
-<p>需要注意的是：<strong>two-stage 或者 mutli-stage 算法，会额外包括一个区域提取器 roi extractor，用于将不同大小的 RoI 特征图统一成相同大小</strong>。</p>
-<p>虽然 head 部分的网络构建比较简单，但是由于正负样本属性定义、正负样本采样和 bbox 编解码模块都在 head 模块中进行组合调用，故 MMDetection <strong>中最复杂的模块就是 head</strong>。在最后的整体流程部分会对该模块进行详细分析。</p>
-<h4 id="2-1-4-Enhance"><a href="#2-1-4-Enhance" class="headerlink" title="2.1.4 Enhance"></a>2.1.4 Enhance</h4><p>enhance 是<strong>即插即用、能够对特征进行增强的模块</strong>，其具体代码可以<strong>通过 dict 形式注册到 backbone、neck 和 head 中</strong>，非常方便(目前还不完善)。常用的 enhance 模块是 <strong>SPP、ASPP、RFB、Dropout、Dropblock、DCN 和各种注意力模块</strong> SeNet、Non_Local、CBA 等。目前 MMDetection 中部分模块支持 enhance 的接入，例如 ResNet 骨架中的 plugins，这个部分的解读放在具体算法模块中讲解。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-65a706efe224f0b7ffc7f4fd7a65f2ca_720w.jpg" alt="img"></p>
-<h4 id="2-1-5-BBox-Assigner"><a href="#2-1-5-BBox-Assigner" class="headerlink" title="2.1.5 BBox Assigner"></a>2.1.5 BBox Assigner</h4><p><strong>正负样本属性分配模块</strong>作用是<strong>进行正负样本定义或者正负样本分配</strong>（可能也包括忽略样本定义），正样本就是常说的前景样本（可以是任何类别），负样本就是背景样本。因为目标检测是一个同时进行分类和回归的问题，对于分类场景必然需要确定正负样本，否则无法训练。该模块至关重要，不同的正负样本分配策略会带来显著的性能差异，目前大部分目标检测算法都会对这个部分进行改进，至关重要。一些典型的分配策略如下：</p>
-<p><img src="https://pic3.zhimg.com/80/v2-12bae70e2ea2e4afb05d0d8d3f38ca56_720w.jpg" alt="img"></p>
-<p>对应的代码在<code>mmdet/core/bbox/assigners</code>中，V2.7 主要包括：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'BaseAssigner'</span><span class="token punctuation">,</span> <span class="token string">'MaxIoUAssigner'</span><span class="token punctuation">,</span> <span class="token string">'ApproxMaxIoUAssigner'</span><span class="token punctuation">,</span> 
-    <span class="token string">'PointAssigner'</span><span class="token punctuation">,</span> <span class="token string">'ATSSAssigner'</span><span class="token punctuation">,</span> <span class="token string">'CenterRegionAssigner'</span><span class="token punctuation">,</span> <span class="token string">'GridAssigner'</span><span class="token punctuation">,</span>
-    <span class="token string">'HungarianAssigner'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 6.初始化 datasets</span>
 
-<h4 id="2-1-7-BBox-Encoder"><a href="#2-1-7-BBox-Encoder" class="headerlink" title="2.1.7 BBox Encoder"></a>2.1.7 BBox Encoder</h4><p>为了<strong>更好的收敛和平衡多个 loss</strong>，具体解决办法非常多，而 bbox 编解码策略也算其中一个，bbox <strong>编码阶段</strong>对应的是<strong>对正样本的 gt bbox 采用某种编码变换</strong>（反操作就是 bbox 解码），最简单的编码是对 gt bbox 除以图片宽高进行归一化以平衡分类和回归分支，一些典型的编解码策略如下：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-1f8d5e5e45886423df474d168452f50b_720w.jpg" alt="img"></p>
-<p>对应的代码在<code>mmdet/core/bbox/coder</code>中，V2.7 主要包括：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'BaseBBoxCoder'</span><span class="token punctuation">,</span> <span class="token string">'PseudoBBoxCoder'</span><span class="token punctuation">,</span> <span class="token string">'DeltaXYWHBBoxCoder'</span><span class="token punctuation">,</span>
-    <span class="token string">'LegacyDeltaXYWHBBoxCoder'</span><span class="token punctuation">,</span> <span class="token string">'TBLRBBoxCoder'</span><span class="token punctuation">,</span> <span class="token string">'YOLOBBoxCoder'</span><span class="token punctuation">,</span>
-    <span class="token string">'BucketingBBoxCoder'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment">#=================== mmdet/apis/train.py ==================</span>
+<span class="token comment"># 1.初始化 data_loaders ，内部会初始化 GroupSampler</span>
+data_loader <span class="token operator">=</span> DataLoader<span class="token punctuation">(</span>dataset<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
 
-<h4 id="2-1-8-Loss"><a href="#2-1-8-Loss" class="headerlink" title="2.1.8 Loss"></a>2.1.8 Loss</h4><p>Loss 通常都分为<strong>分类和回归 loss</strong>，其<strong>对网络 head 输出的预测值和 bbox encoder 得到的 targets 进行梯度下降</strong>迭代训练。</p>
-<p>loss 的设计也是各大算法重点改进对象，常用的 loss 如下：</p>
-<p><img src="https://pic4.zhimg.com/80/v2-686b0b9ac6a82f9945ae454d18783227_720w.jpg" alt="img"></p>
-<p>对应的代码在<code>mmdet/models/losses</code>中，V2.7 主要包括：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'cross_entropy'</span><span class="token punctuation">,</span> <span class="token string">'binary_cross_entropy'</span><span class="token punctuation">,</span>
-    <span class="token string">'mask_cross_entropy'</span><span class="token punctuation">,</span> <span class="token string">'CrossEntropyLoss'</span><span class="token punctuation">,</span> <span class="token string">'sigmoid_focal_loss'</span><span class="token punctuation">,</span>
-    <span class="token string">'FocalLoss'</span><span class="token punctuation">,</span> <span class="token string">'smooth_l1_loss'</span><span class="token punctuation">,</span> <span class="token string">'SmoothL1Loss'</span><span class="token punctuation">,</span> <span class="token string">'balanced_l1_loss'</span><span class="token punctuation">,</span>
-    <span class="token string">'BalancedL1Loss'</span><span class="token punctuation">,</span> <span class="token string">'mse_loss'</span><span class="token punctuation">,</span> <span class="token string">'MSELoss'</span><span class="token punctuation">,</span> <span class="token string">'iou_loss'</span><span class="token punctuation">,</span> <span class="token string">'bounded_iou_loss'</span><span class="token punctuation">,</span>
-    <span class="token string">'IoULoss'</span><span class="token punctuation">,</span> <span class="token string">'BoundedIoULoss'</span><span class="token punctuation">,</span> <span class="token string">'GIoULoss'</span><span class="token punctuation">,</span> <span class="token string">'DIoULoss'</span><span class="token punctuation">,</span> <span class="token string">'CIoULoss'</span><span class="token punctuation">,</span> <span class="token string">'GHMC'</span><span class="token punctuation">,</span>
-    <span class="token string">'GHMR'</span><span class="token punctuation">,</span> <span class="token string">'reduce_loss'</span><span class="token punctuation">,</span> <span class="token string">'weight_reduce_loss'</span><span class="token punctuation">,</span> <span class="token string">'weighted_loss'</span><span class="token punctuation">,</span> <span class="token string">'L1Loss'</span><span class="token punctuation">,</span>
-    <span class="token string">'l1_loss'</span><span class="token punctuation">,</span> <span class="token string">'isr_p'</span><span class="token punctuation">,</span> <span class="token string">'carl_loss'</span><span class="token punctuation">,</span> <span class="token string">'AssociativeEmbeddingLoss'</span><span class="token punctuation">,</span>
-    <span class="token string">'GaussianFocalLoss'</span><span class="token punctuation">,</span> <span class="token string">'QualityFocalLoss'</span><span class="token punctuation">,</span> <span class="token string">'DistributionFocalLoss'</span><span class="token punctuation">,</span>
-    <span class="token string">'VarifocalLoss'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 2.基于是否使用分布式训练，初始化对应的 DataParallel</span>
+<span class="token keyword">if</span> distributed<span class="token punctuation">:</span>
+  model <span class="token operator">=</span> MMDistributedDataParallel<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+<span class="token keyword">else</span><span class="token punctuation">:</span>
+  model <span class="token operator">=</span> MMDataParallel<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
 
-<p>可以看出 MMDetection 中已经实现了非常多的 loss，可以直接使用。</p>
-<h4 id="2-1-9-Training-tricks"><a href="#2-1-9-Training-tricks" class="headerlink" title="2.1.9 Training tricks"></a>2.1.9 Training tricks</h4><p>训练技巧非常多，常说的调参很大一部分工作都是在设置这部分超参。这部分内容比较杂乱，很难做到完全统一，目前主流的 tricks 如下所示:</p>
-<p><img src="https://pic3.zhimg.com/80/v2-569a12b6d4a20f8619a27b48d5b2fa42_720w.jpg" alt="img"></p>
-<p>MMDetection 目前这部分还会继续完善。</p>
-<h3 id="2-2-测试核心组件"><a href="#2-2-测试核心组件" class="headerlink" title="2.2 测试核心组件"></a>2.2 测试核心组件</h3><p>测试核心组件和训练非常类似，但是简单很多，除了必备的网络构建部分外( <strong>backbone、neck、head 和 enhance</strong> )，不需要正负样本定义、正负样本采样和 loss 计算三个最难的部分，但是其<strong>额外需要一个 bbox 后处理模块</strong>和<strong>测试 trick</strong>。</p>
-<h4 id="2-2-1-BBox-Decoder"><a href="#2-2-1-BBox-Decoder" class="headerlink" title="2.2.1 BBox Decoder"></a>2.2.1 BBox Decoder</h4><p><strong>训练时候进行了编码，那么对应的测试环节需要进行解码。</strong>根据编码的不同，解码也是不同的。举个简单例子：假设训练时候对宽高是直接除以图片宽高进行归一化的，那么解码过程也仅仅需要乘以图片宽高即可。其代码和 bbox encoder 放在一起，在<code>mmdet/core/bbox/coder</code>中。</p>
-<h4 id="2-2-2-BBox-PostProcess"><a href="#2-2-2-BBox-PostProcess" class="headerlink" title="2.2.2 BBox PostProcess"></a>2.2.2 BBox PostProcess</h4><p>在<strong>得到原图尺度 bbox 后，由于可能会出现重叠 bbox 现象</strong>，故一般都需要进行后处理，最常用的后处理就是<strong>非极大值抑制以及其变种</strong>。</p>
-<p>其对应的文件在<code>mmdet/core/post_processing</code>中，V2.7 主要包括：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python">__all__ <span class="token operator">=</span> <span class="token punctuation">[</span>
-    <span class="token string">'multiclass_nms'</span><span class="token punctuation">,</span> <span class="token string">'merge_aug_proposals'</span><span class="token punctuation">,</span> <span class="token string">'merge_aug_bboxes'</span><span class="token punctuation">,</span>
-    <span class="token string">'merge_aug_scores'</span><span class="token punctuation">,</span> <span class="token string">'merge_aug_masks'</span><span class="token punctuation">,</span> <span class="token string">'fast_nms'</span>
-<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 3.初始化 runner</span>
+runner <span class="token operator">=</span> EpochBasedRunner<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
 
-<h4 id="2-2-3-Testing-tricks"><a href="#2-2-3-Testing-tricks" class="headerlink" title="2.2.3 Testing tricks"></a>2.2.3 Testing tricks</h4><p>为了提高检测性能，测试阶段也会采用 trick。这个阶段的 tricks 也非常多，难以完全统一，最典型的是<strong>多尺度测试</strong>以及<strong>各种模型集成手段</strong>，典型配置如下：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token builtin">dict</span><span class="token punctuation">(</span>
-    <span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'MultiScaleFlipAug'</span><span class="token punctuation">,</span>
-    img_scale<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">1333</span><span class="token punctuation">,</span> <span class="token number">800</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-    flip<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
-    transforms<span class="token operator">=</span><span class="token punctuation">[</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'Resize'</span><span class="token punctuation">,</span> keep_ratio<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'RandomFlip'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'Normalize'</span><span class="token punctuation">,</span> <span class="token operator">**</span>img_norm_cfg<span class="token punctuation">)</span><span class="token punctuation">,</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'Pad'</span><span class="token punctuation">,</span> size_divisor<span class="token operator">=</span><span class="token number">32</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'ImageToTensor'</span><span class="token punctuation">,</span> keys<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'img'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-        <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'Collect'</span><span class="token punctuation">,</span> keys<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'img'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span>
-<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 4.注册必备 hook</span>
+runner<span class="token punctuation">.</span>register_training_hooks<span class="token punctuation">(</span>cfg<span class="token punctuation">.</span>lr_config<span class="token punctuation">,</span> optimizer_config<span class="token punctuation">,</span>
+                               cfg<span class="token punctuation">.</span>checkpoint_config<span class="token punctuation">,</span> cfg<span class="token punctuation">.</span>log_config<span class="token punctuation">,</span>
+                               cfg<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'momentum_config'</span><span class="token punctuation">,</span> <span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 
-<p><img src="https://pic3.zhimg.com/80/v2-16e307727f0c3e941ec72c21f214b982_720w.jpg" alt="img"></p>
-<h3 id="2-3-训练测试算法流程"><a href="#2-3-训练测试算法流程" class="headerlink" title="2.3 训练测试算法流程"></a>2.3 训练测试算法流程</h3><p>在分析完每个训练流程的各个核心组件后，为了方便大家理解整个算法构建，下面分析 MMDetection 是<strong>如何组合各个组件进行训练的</strong>，这里<strong>以 one-stage 检测器为例</strong>，two-stage 也比较类似。</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">SingleStageDetector</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token operator">-</span><span class="token operator">-</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+<span class="token comment"># 5.如果需要 val，则还需要注册 EvalHook           </span>
+runner<span class="token punctuation">.</span>register_hook<span class="token punctuation">(</span>eval_hook<span class="token punctuation">(</span>val_dataloader<span class="token punctuation">,</span> <span class="token operator">**</span>eval_cfg<span class="token punctuation">)</span><span class="token punctuation">)</span>
 
-   <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token comment"># 构建backbone、neck和head</span>
-        self<span class="token punctuation">.</span>backbone <span class="token operator">=</span> build_backbone<span class="token punctuation">(</span>backbone<span class="token punctuation">)</span>
-        <span class="token keyword">if</span> neck <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
-            self<span class="token punctuation">.</span>neck <span class="token operator">=</span> build_neck<span class="token punctuation">(</span>neck<span class="token punctuation">)</span>
-        self<span class="token punctuation">.</span>bbox_head <span class="token operator">=</span> build_head<span class="token punctuation">(</span>bbox_head<span class="token punctuation">)</span>
+<span class="token comment"># 6.注册用户自定义 hook</span>
+runner<span class="token punctuation">.</span>register_hook<span class="token punctuation">(</span>hook<span class="token punctuation">,</span> priority<span class="token operator">=</span>priority<span class="token punctuation">)</span>
 
-  <span class="token keyword">def</span> <span class="token function">forward_train</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token operator">-</span><span class="token operator">-</span><span class="token punctuation">)</span><span class="token punctuation">:</span> 
-        <span class="token comment"># 先运行backbone+neck进行特征提取</span>
-        x <span class="token operator">=</span> self<span class="token punctuation">.</span>extract_feat<span class="token punctuation">(</span>img<span class="token punctuation">)</span>
-        <span class="token comment"># 对head进行forward train，输出loss</span>
-        losses <span class="token operator">=</span> self<span class="token punctuation">.</span>bbox_head<span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>
-            x<span class="token punctuation">,</span> 
-            img_metas<span class="token punctuation">,</span> 
-            gt_bboxes<span class="token punctuation">,</span>                            
-            gt_labels<span class="token punctuation">,</span> 
-            gt_bboxes_ignore
-        <span class="token punctuation">)</span>
-        <span class="token keyword">return</span> losses
+<span class="token comment"># 7.权重恢复和加载</span>
+<span class="token keyword">if</span> cfg<span class="token punctuation">.</span>resume_from<span class="token punctuation">:</span>
+    runner<span class="token punctuation">.</span>resume<span class="token punctuation">(</span>cfg<span class="token punctuation">.</span>resume_from<span class="token punctuation">)</span>
+<span class="token keyword">elif</span> cfg<span class="token punctuation">.</span>load_from<span class="token punctuation">:</span>
+    runner<span class="token punctuation">.</span>load_checkpoint<span class="token punctuation">(</span>cfg<span class="token punctuation">.</span>load_from<span class="token punctuation">)</span>
 
-  <span class="token keyword">def</span> <span class="token function">simple_test</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token operator">-</span><span class="token operator">-</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-        <span class="token comment"># 先运行backbone+neck进行特征提取</span>
-        x <span class="token operator">=</span> self<span class="token punctuation">.</span>extract_feat<span class="token punctuation">(</span>img<span class="token punctuation">)</span>
-        <span class="token comment"># head输出预测特征图</span>
-        outs <span class="token operator">=</span> self<span class="token punctuation">.</span>bbox_head<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
-        <span class="token comment"># bbox解码和还原</span>
-        bbox_list <span class="token operator">=</span> self<span class="token punctuation">.</span>bbox_head<span class="token punctuation">.</span>get_bboxes<span class="token punctuation">(</span>
-            <span class="token operator">*</span>outs<span class="token punctuation">,</span> 
-            img_metas<span class="token punctuation">,</span> 
-            rescale<span class="token operator">=</span>rescale
-        <span class="token punctuation">)</span>
-        <span class="token comment"># 重组结果返回</span>
-        bbox_results <span class="token operator">=</span> <span class="token punctuation">[</span>
-            bbox2result<span class="token punctuation">(</span>
-                det_bboxes<span class="token punctuation">,</span> 
-                det_labels<span class="token punctuation">,</span>
-                self<span class="token punctuation">.</span>bbox_head<span class="token punctuation">.</span>num_classes
-            <span class="token punctuation">)</span>
-            <span class="token keyword">for</span> det_bboxes<span class="token punctuation">,</span> det_labels <span class="token keyword">in</span> bbox_list
-        <span class="token punctuation">]</span>
-        <span class="token keyword">return</span> bbox_results<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 8.运行，开始训练</span>
+runner<span class="token punctuation">.</span>run<span class="token punctuation">(</span>data_loaders<span class="token punctuation">,</span> cfg<span class="token punctuation">.</span>workflow<span class="token punctuation">,</span> cfg<span class="token punctuation">.</span>total_epochs<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>以上就是整个检测器算法训练和测试最简逻辑，可以发现训练部分最核心的就是<code>bbox_head.forward_train</code>，测试部分最核心的是<code>bbox_head.get_bboxes</code>，下面单独简要分析。</p>
-<h4 id="2-3-1-bbox-head-forward-train"><a href="#2-3-1-bbox-head-forward-train" class="headerlink" title="2.3.1 bbox_head.forward_train"></a>2.3.1 bbox_head.forward_train</h4><p>forward_train 是通用函数，如下所示：</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">forward_train</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token comment"># 调用每个head自身的forward方法</span>
-    outs <span class="token operator">=</span> self<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
-    <span class="token keyword">if</span> gt_labels <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
-        loss_inputs <span class="token operator">=</span> outs <span class="token operator">+</span> <span class="token punctuation">(</span>gt_bboxes<span class="token punctuation">,</span> img_metas<span class="token punctuation">)</span>
+<p>上面的流程比较简单，<strong>一般大家比较难以理解的是 <code>runner.run</code> 内部逻辑</strong>，下小节进行详细分析，而对于测试逻辑由于比较简单，就不详细描述了，<strong>简单来说测试流程下不需要 runner，直接加载训练好的权重，然后进行 model 推理</strong>即可。</p>
+<h2 id="3-2-Runner-训练和验证代码抽象"><a href="#3-2-Runner-训练和验证代码抽象" class="headerlink" title="3.2 Runner 训练和验证代码抽象"></a>3.2 Runner 训练和验证代码抽象</h2><p>runner 对象内部的 run 方式是一个通用方法，可以运行任何 workflow，目前常用的主要是 train 和 val。</p>
+<ul>
+<li>当配置为：workflow = [(‘train’, 1)]，表示仅仅进行 train workflow，也就是迭代训练</li>
+<li>当配置为：workflow = [(‘train’, n),(‘val’, 1)]，表示先进行 n 个 epoch 的训练，然后再进行1个 epoch 的验证，然后循环往复,如果写成 [(‘val’, 1),(‘train’, n)] 表示先进行验证，然后才开始训练</li>
+</ul>
+<p>当进入对应的 workflow，则会调用 runner 里面的 train() 或者 val()，表示进行一次 epoch 迭代。其代码也非常简单，如下所示：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">train</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data_loader<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    self<span class="token punctuation">.</span>model<span class="token punctuation">.</span>train<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>mode <span class="token operator">=</span> <span class="token string">'train'</span>
+    self<span class="token punctuation">.</span>data_loader <span class="token operator">=</span> data_loader
+    self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'before_train_epoch'</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i<span class="token punctuation">,</span> data_batch <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>data_loader<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'before_train_iter'</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>run_iter<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span> train_mode<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'after_train_iter'</span><span class="token punctuation">)</span>
+
+    self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'after_train_epoch'</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">val</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data_loader<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    self<span class="token punctuation">.</span>model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>mode <span class="token operator">=</span> <span class="token string">'val'</span>
+    self<span class="token punctuation">.</span>data_loader <span class="token operator">=</span> data_loader
+    self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'before_val_epoch'</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> i<span class="token punctuation">,</span> data_batch <span class="token keyword">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>data_loader<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'before_val_iter'</span><span class="token punctuation">)</span>
+        <span class="token keyword">with</span> torch<span class="token punctuation">.</span>no_grad<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>run_iter<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span> train_mode<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'after_val_iter'</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>call_hook<span class="token punctuation">(</span><span class="token string">'after_val_epoch'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>核心函数实际上是 self.run_iter()，如下：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">run_iter</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data_batch<span class="token punctuation">,</span> train_mode<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> train_mode<span class="token punctuation">:</span>
+        <span class="token comment"># 对于每次迭代，最终是调用如下函数</span>
+        outputs <span class="token operator">=</span> self<span class="token punctuation">.</span>model<span class="token punctuation">.</span>train_step<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
     <span class="token keyword">else</span><span class="token punctuation">:</span>
-        loss_inputs <span class="token operator">=</span> outs <span class="token operator">+</span> <span class="token punctuation">(</span>gt_bboxes<span class="token punctuation">,</span> gt_labels<span class="token punctuation">,</span> img_metas<span class="token punctuation">)</span>
-    <span class="token comment"># 计算每个head自身的loss方法</span>
-    losses <span class="token operator">=</span> self<span class="token punctuation">.</span>loss<span class="token punctuation">(</span>
-        <span class="token operator">*</span>loss_inputs<span class="token punctuation">,</span> 
-        gt_bboxes_ignore<span class="token operator">=</span>gt_bboxes_ignore
-    <span class="token punctuation">)</span>
-    <span class="token comment"># 返回</span>
-    <span class="token keyword">return</span> losses<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+        <span class="token comment"># 对于每次迭代，最终是调用如下函数</span>
+        outputs <span class="token operator">=</span> self<span class="token punctuation">.</span>model<span class="token punctuation">.</span>val_step<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
 
-<p>对于不同的 head，虽然 forward 内容不一样，但是依然可以抽象为： <code>outs = self(x)</code></p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> feats<span class="token punctuation">)</span><span class="token punctuation">:</span>
-   <span class="token comment"># 多尺度特征图，一个一个迭代进行forward_single</span>
-   <span class="token keyword">return</span> multi_apply<span class="token punctuation">(</span>self<span class="token punctuation">.</span>forward_single<span class="token punctuation">,</span> feats<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token string">'log_vars'</span> <span class="token keyword">in</span> outputs<span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>log_buffer<span class="token punctuation">.</span>update<span class="token punctuation">(</span>outputs<span class="token punctuation">[</span><span class="token string">'log_vars'</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>outputs <span class="token operator">=</span> outputs<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<span class="token keyword">def</span> <span class="token function">forward_single</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> x<span class="token punctuation">)</span><span class="token punctuation">:</span>
-   <span class="token comment"># 运行各个head独特的head forward方法，得到预测图</span>
-   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-   <span class="token keyword">return</span> cls_score<span class="token punctuation">,</span> bbox_pred<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上述 self.call_hook() 表示在不同生命周期调用所有已经注册进去的 hook，而字符串参数表示对应的生命周期。以 OptimizerHook 为例，其执行反向传播、梯度裁剪和参数更新等核心训练功能：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token decorator annotation punctuation">@HOOKS<span class="token punctuation">.</span>register_module</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">OptimizerHook</span><span class="token punctuation">(</span>Hook<span class="token punctuation">)</span><span class="token punctuation">:</span>
 
-<p>而对于不同的 head，其 loss 计算部分也比较复杂，可以简单抽象为：<code>losses = self.loss(...)</code></p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">loss</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token comment"># 1 生成anchor-base需要的anchor或者anchor-free需要的points</span>
-    <span class="token comment"># 2 利用gt bbox对特征图或者anchor计算其正负和忽略样本属性</span>
-    <span class="token comment"># 3 进行正负样本采样</span>
-    <span class="token comment"># 4 对gt bbox进行bbox编码</span>
-    <span class="token comment"># 5 loss计算，并返回</span>
-    <span class="token keyword">return</span> <span class="token builtin">dict</span><span class="token punctuation">(</span>loss_cls<span class="token operator">=</span>losses_cls<span class="token punctuation">,</span> loss_bbox<span class="token operator">=</span>losses_bbox<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> grad_clip<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>grad_clip <span class="token operator">=</span> grad_clip
 
-<h4 id="2-3-2-bbox-head-get-bboxes"><a href="#2-3-2-bbox-head-get-bboxes" class="headerlink" title="2.3.2 bbox_head.get_bboxes"></a>2.3.2 bbox_head.get_bboxes</h4><p>get_bboxes函数更加简单</p>
-<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">get_bboxes</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-   <span class="token comment"># 1 生成anchor-base需要的anchor或者anchor-free需要的points</span>
-   <span class="token comment"># 2 遍历每个输出层，遍历batch内部的每张图片，对每张图片先提取指定个数的预测结果，缓解后面后处理压力；对保留的位置进行bbox解码和还原到原图尺度</span>
-   <span class="token comment"># 3 统一nms后处理</span>
-   <span class="token keyword">return</span> det_bboxes<span class="token punctuation">,</span> det_labels<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    <span class="token keyword">def</span> <span class="token function">after_train_iter</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> runner<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        runner<span class="token punctuation">.</span>optimizer<span class="token punctuation">.</span>zero_grad<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        runner<span class="token punctuation">.</span>outputs<span class="token punctuation">[</span><span class="token string">'loss'</span><span class="token punctuation">]</span><span class="token punctuation">.</span>backward<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>grad_clip <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            grad_norm <span class="token operator">=</span> self<span class="token punctuation">.</span>clip_grads<span class="token punctuation">(</span>runner<span class="token punctuation">.</span>model<span class="token punctuation">.</span>parameters<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        runner<span class="token punctuation">.</span>optimizer<span class="token punctuation">.</span>step<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h2><p>本文重点分析了一个目标检测器是如何通过多个核心组件堆叠而成，不涉及具体代码，大家只需要总体把握即可，其中最应该了解的是：<strong>任何一个目标检测算法都可以分成 n 个核心组件，组件和组件之间是隔离的，方便复用和设计</strong>。当面对一个新算法时候我们可以先分析其主要是改进了哪几个核心组件，然后就可以高效的掌握该算法。</p>
-<p>另外还有一些重要的模块没有分析，特别是 dataset、dataloader 和分布式训练相关的检测代码，由于篇幅限制就不介绍了，如有需要欢迎在评论区留言。</p>
-<p>再次欢迎大家使用 MMDetection，也非常欢迎社区贡献！</p>
-<p>最后附上总图：</p>
-<p><img src="https://pic3.zhimg.com/80/v2-c4e6229a1fd42692d090108481be34a6_720w.jpg" alt="img"></p>
+<p>可以发现 OptimizerHook 注册到的生命周期是 after_train_iter，故在每次 train() 里面运行到 <code>self.call_hook('after_val_iter')</code> 时候就会被调用，其他 hook 也是同样运行逻辑。</p>
+<h3 id="3-3-Model-训练和测试代码抽象"><a href="#3-3-Model-训练和测试代码抽象" class="headerlink" title="3.3 Model 训练和测试代码抽象"></a>3.3 Model 训练和测试代码抽象</h3><p>前面说个，训练和验证的时候实际上调用了 model 内部的 <code>train_step</code> 和 <code>val_step</code> 函数，<strong>理解了两个函数调用流程就理解了 MMDetection 训练和测试流程</strong>。</p>
+<p>注意，由于 model 对象会被 DataParallel 类包裹，故实际上上此时的 model，是指的 MMDataParallel 或者 MMDistributedDataParallel。以非分布式 train_step 流程为例，其内部完成调用流程图示如下：</p>
+<p><img src="https://pic4.zhimg.com/80/v2-0d17b53f68286931803bf9d1dca10467_720w.jpg" alt="img"></p>
+<h3 id="3-3-1-train-或者-val-流程"><a href="#3-3-1-train-或者-val-流程" class="headerlink" title="3.3.1 train 或者 val 流程"></a>3.3.1 train 或者 val 流程</h3><h4 id="1-调用-runner-中的-train-step-或者-val-step"><a href="#1-调用-runner-中的-train-step-或者-val-step" class="headerlink" title="(1) 调用 runner 中的 train_step 或者 val_step"></a><strong>(1) 调用 runner 中的 <code>train_step</code> 或者 <code>val_step</code></strong></h4><p>在 runner 中调用 <code>train_step</code> 或者 <code>val_step</code>，代码如下：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#=================== mmcv/runner/epoch_based_runner.py ==================</span>
+<span class="token keyword">if</span> train_mode<span class="token punctuation">:</span>
+    outputs <span class="token operator">=</span> self<span class="token punctuation">.</span>model<span class="token punctuation">.</span>train_step<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+<span class="token keyword">else</span><span class="token punctuation">:</span>
+    outputs <span class="token operator">=</span> self<span class="token punctuation">.</span>model<span class="token punctuation">.</span>val_step<span class="token punctuation">(</span>data_batch<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>实际上，首先会调用 DataParallel 中的 <code>train_step</code> 或者 <code>val_step</code> ，其具体调用流程为：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># 非分布式训练</span>
+<span class="token comment">#=================== mmcv/parallel/data_parallel.py/MMDataParallel ==================</span>
+<span class="token keyword">def</span> <span class="token function">train_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token operator">*</span>inputs<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> self<span class="token punctuation">.</span>device_ids<span class="token punctuation">:</span>
+        inputs<span class="token punctuation">,</span> kwargs <span class="token operator">=</span> self<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>inputs<span class="token punctuation">,</span> kwargs<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token comment"># 此时才是调用 model 本身的 train_step</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>module<span class="token punctuation">.</span>train_step<span class="token punctuation">(</span><span class="token operator">*</span>inputs<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span>
+    <span class="token comment"># 单 gpu 模式</span>
+    inputs<span class="token punctuation">,</span> kwargs <span class="token operator">=</span> self<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>inputs<span class="token punctuation">,</span> kwargs<span class="token punctuation">,</span> self<span class="token punctuation">.</span>device_ids<span class="token punctuation">)</span>
+    <span class="token comment"># 此时才是调用 model 本身的 train_step</span>
+    <span class="token keyword">return</span> self<span class="token punctuation">.</span>module<span class="token punctuation">.</span>train_step<span class="token punctuation">(</span><span class="token operator">*</span>inputs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token comment"># val_step 也是的一样逻辑</span>
+<span class="token keyword">def</span> <span class="token function">val_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token operator">*</span>inputs<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    inputs<span class="token punctuation">,</span> kwargs <span class="token operator">=</span> self<span class="token punctuation">.</span>scatter<span class="token punctuation">(</span>inputs<span class="token punctuation">,</span> kwargs<span class="token punctuation">,</span> self<span class="token punctuation">.</span>device_ids<span class="token punctuation">)</span>
+    <span class="token comment"># 此时才是调用 model 本身的 val_step</span>
+    <span class="token keyword">return</span> self<span class="token punctuation">.</span>module<span class="token punctuation">.</span>val_step<span class="token punctuation">(</span><span class="token operator">*</span>inputs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以发现，在调用 model 本身的 train_step 前，需要额外调用 <strong>scatter 函数</strong>，前面说过该函数的作用是<strong>处理 DataContainer 格式数据，使其能够组成 batch</strong>，否则程序会报错。</p>
+<p>如果是分布式训练，则调用的实际上是 <code>mmcv/parallel/distributed.py/MMDistributedDataParallel</code>，最终调用的依然是 model 本身的 <code>train_step</code> 或者 <code>val_step</code>。</p>
+<h4 id="2-调用-model-中的-train-step-或者-val-step"><a href="#2-调用-model-中的-train-step-或者-val-step" class="headerlink" title="(2) 调用 model 中的 train_step 或者 val_step"></a><strong>(2) 调用 model 中的 <code>train_step</code> 或者 <code>val_step</code></strong></h4><p>其核心代码如下：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#=================== mmdet/models/detectors/base.py/BaseDetector ==================</span>
+<span class="token keyword">def</span> <span class="token function">train_step</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data<span class="token punctuation">,</span> optimizer<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 调用本类自身的 forward 方法</span>
+    losses <span class="token operator">=</span> self<span class="token punctuation">(</span><span class="token operator">**</span>data<span class="token punctuation">)</span>
+    <span class="token comment"># 解析 loss</span>
+    loss<span class="token punctuation">,</span> log_vars <span class="token operator">=</span> self<span class="token punctuation">.</span>_parse_losses<span class="token punctuation">(</span>losses<span class="token punctuation">)</span>
+    <span class="token comment"># 返回字典对象</span>
+    outputs <span class="token operator">=</span> <span class="token builtin">dict</span><span class="token punctuation">(</span>
+        loss<span class="token operator">=</span>loss<span class="token punctuation">,</span> log_vars<span class="token operator">=</span>log_vars<span class="token punctuation">,</span> num_samples<span class="token operator">=</span><span class="token builtin">len</span><span class="token punctuation">(</span>data<span class="token punctuation">[</span><span class="token string">'img_metas'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> outputs
+
+<span class="token keyword">def</span> <span class="token function">forward</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> img<span class="token punctuation">,</span> img_metas<span class="token punctuation">,</span> return_loss<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> return_loss<span class="token punctuation">:</span>
+        <span class="token comment"># 训练模式</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>img<span class="token punctuation">,</span> img_metas<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        <span class="token comment"># 测试模式</span>
+        <span class="token keyword">return</span> self<span class="token punctuation">.</span>forward_test<span class="token punctuation">(</span>img<span class="token punctuation">,</span> img_metas<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>forward_train</code> 和 <code>forward_test</code> 需要在不同的算法子类中实现，输出是 Loss 或者 预测结果。</p>
+<p><strong>(3) 调用子类中的 <code>forward_train</code> 方法</strong></p>
+<p>目前提供了两个具体子类，<code>TwoStageDetector</code> 和 <code>SingleStageDetector</code> ，用于实现 two-stage 和 single-stage 算法。</p>
+<p>对于 <code>TwoStageDetector</code> 而言，其核心逻辑是：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#============= mmdet/models/detectors/two_stage.py/TwoStageDetector ============</span>
+<span class="token keyword">def</span> <span class="token function">forward_train</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 先进行 backbone+neck 的特征提取</span>
+    x <span class="token operator">=</span> self<span class="token punctuation">.</span>extract_feat<span class="token punctuation">(</span>img<span class="token punctuation">)</span>
+    losses <span class="token operator">=</span> <span class="token builtin">dict</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># RPN forward and loss</span>
+    <span class="token keyword">if</span> self<span class="token punctuation">.</span>with_rpn<span class="token punctuation">:</span>
+        <span class="token comment"># 训练 RPN</span>
+        proposal_cfg <span class="token operator">=</span> self<span class="token punctuation">.</span>train_cfg<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'rpn_proposal'</span><span class="token punctuation">,</span>
+                                          self<span class="token punctuation">.</span>test_cfg<span class="token punctuation">.</span>rpn<span class="token punctuation">)</span>
+        <span class="token comment"># 主要是调用 rpn_head 内部的 forward_train 方法</span>
+        rpn_losses<span class="token punctuation">,</span> proposal_list <span class="token operator">=</span> self<span class="token punctuation">.</span>rpn_head<span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>x<span class="token punctuation">,</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+        losses<span class="token punctuation">.</span>update<span class="token punctuation">(</span>rpn_losses<span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        proposal_list <span class="token operator">=</span> proposals
+    <span class="token comment"># 第二阶段，主要是调用 roi_head 内部的 forward_train 方法</span>
+    roi_losses <span class="token operator">=</span> self<span class="token punctuation">.</span>roi_head<span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+    losses<span class="token punctuation">.</span>update<span class="token punctuation">(</span>roi_losses<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> losses<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>对于 <code>SingleStageDetector</code> 而言，其核心逻辑是：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#============= mmdet/models/detectors/single_stage.py/SingleStageDetector ============</span>
+<span class="token keyword">def</span> <span class="token function">forward_train</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token builtin">super</span><span class="token punctuation">(</span>SingleStageDetector<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>img<span class="token punctuation">,</span> img_metas<span class="token punctuation">)</span>
+    <span class="token comment"># 先进行 backbone+neck 的特征提取</span>
+    x <span class="token operator">=</span> self<span class="token punctuation">.</span>extract_feat<span class="token punctuation">(</span>img<span class="token punctuation">)</span>
+    <span class="token comment"># 主要是调用 bbox_head 内部的 forward_train 方法</span>
+    losses <span class="token operator">=</span> self<span class="token punctuation">.</span>bbox_head<span class="token punctuation">.</span>forward_train<span class="token punctuation">(</span>x<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> losses<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果再往里分析，那就到各个 Head 模块的训练环节了，这部分内容请读者自行分析，应该不难。</p>
+<h3 id="3-3-2-test-流程"><a href="#3-3-2-test-流程" class="headerlink" title="3.3.2 test 流程"></a>3.3.2 test 流程</h3><p>由于没有 runner 对象，测试流程简单很多，下面简要概述：</p>
+<ol>
+<li>调用 MMDataParallel 或 MMDistributedDataParallel 中的 <code>forward</code> 方法</li>
+<li>调用 base.py 中的 <code>forward</code> 方法</li>
+<li>调用 base.py 中的 <code>self.forward_test</code> 方法</li>
+<li>如果是单尺度测试，则会调用 TwoStageDetector 或 SingleStageDetector 中的 <code>simple_test</code> 方法，如果是多尺度测试，则调用 <code>aug_test</code> 方法</li>
+<li>最终调用的是每个具体算法 Head 模块的 <code>simple_test</code> 或者 <code>aug_test</code> 方法</li>
+</ol>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h2><p>本文基于第一篇解读文章，详细地从三个层面全面解读了 MMDetection 框架，希望读者读完本文，能够对 MMDetection 框架设计思想、组件间关系和整体代码实现流程了然于心。</p>
 
                 
             </div>
@@ -868,7 +869,7 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/">http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/</a>
+                    <a href="http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/">http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -1347,7 +1348,7 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/">
+                <a href="/2022/04/05/mmdetection-xue-xi-bi-ji-3-gou-jian-retinanet-ji-pei-zhi/">
                     <div class="card-image">
                         
                         
@@ -1384,13 +1385,13 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/03/18/zhao-xin-kao-he/">
+                <a href="/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="智能视频感知与分析工作室招新考核题目">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
                         
-                        <span class="card-title">智能视频感知与分析工作室招新考核题目</span>
+                        <span class="card-title"></span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -1401,27 +1402,15 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-03-18
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-04-02
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
-                            JJ_REN
+                            JJ_Ren
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E8%80%83%E6%A0%B8%E9%A2%98%E7%9B%AE/">
-                        <span class="chip bg-color">考核题目</span>
-                    </a>
-                    
-                    <a href="/tags/%E6%99%BA%E8%83%BD%E8%A7%86%E9%A2%91%E6%84%9F%E7%9F%A5%E4%B8%8E%E5%88%86%E6%9E%90%E5%B7%A5%E4%BD%9C%E5%AE%A4/">
-                        <span class="chip bg-color">智能视频感知与分析工作室</span>
-                    </a>
-                    
                 </div>
                 
             </div>
