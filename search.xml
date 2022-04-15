@@ -18,19 +18,6 @@
     
     <entry>
       <title></title>
-      <link href="/2022/04/15/docker-gpu/"/>
-      <url>/2022/04/15/docker-gpu/</url>
-      
-        <content type="html"><![CDATA[<p>#face_v3.0<br>    1.路径完美融合,提升了操作流畅性<br>    2.core里包含核心算法,main的建立方便了用户操作<br>    3.包含了串口通信,实现了简单的发送数据</p>]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
       <link href="/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/"/>
       <url>/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/</url>
       
