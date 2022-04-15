@@ -6,7 +6,7 @@
   <link href="http://jjren-xd.github.io/atom.xml" rel="self"/>
   
   <link href="http://jjren-xd.github.io/"/>
-  <updated>2022-04-12T02:30:25.597Z</updated>
+  <updated>2022-04-15T08:28:43.939Z</updated>
   <id>http://jjren-xd.github.io/</id>
   
   <author>
@@ -18,10 +18,31 @@
   
   <entry>
     <title></title>
+    <link href="http://jjren-xd.github.io/2022/04/15/docker-gpu/"/>
+    <id>http://jjren-xd.github.io/2022/04/15/docker-gpu/</id>
+    <published>2022-04-15T08:28:43.139Z</published>
+    <updated>2022-04-15T08:28:43.939Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;#face_v3.0&lt;br&gt;    1.路径完美融合,提升了操作流畅性&lt;br&gt;    2.core里包含核心算法,main的建立方便了用户操作&lt;br&gt;   </summary>
+        
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title></title>
     <link href="http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/"/>
     <id>http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/</id>
     <published>2022-04-12T02:13:09.548Z</published>
-    <updated>2022-04-12T02:30:25.597Z</updated>
+    <updated>2022-04-12T04:09:51.589Z</updated>
     
     
       

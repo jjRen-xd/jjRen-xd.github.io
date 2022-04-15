@@ -629,7 +629,7 @@
 <li>PyTorch 和 Caffe style 的配置和权重</li>
 <li>各种 loss 对比配置和权重</li>
 <li>不包含 FPN 的 Faster R-CNN 配置和权重</li>
-<li>常用类别例如 person 的配置和权重，可作为下游任务例如行人检测的预训练权重，性能极佳</li>
+<li>常用类别例如 person 的配置和权重，可作为<strong>下游任务例如行人检测的预训练权重，性能极佳</strong></li>
 </ul>
 <p>以 ResNet50 为例，其配置和 RetinaNet 完全相同，此处不再描述。</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># 使用 pytorch 提供的在 imagenet 上面训练过的权重作为预训练权重</span>
@@ -643,6 +643,7 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
     num_stages<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">,</span>
     <span class="token comment"># 表示本模块输出的特征图索引，(0, 1, 2, 3),表示4个 stage 输出都需要，</span>
     <span class="token comment"># 其 stride 为 (4,8,16,32)，channel 为 (256, 512, 1024, 2048)</span>
+    <span class="token comment"># stride表示模型的下采样率</span>
     out_indices<span class="token operator">=</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
     <span class="token comment"># 表示固定 stem 加上第一个 stage 的权重，不进行训练</span>
     frozen_stages<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">,</span>
@@ -651,14 +652,14 @@ backbone<span class="token operator">=</span><span class="token builtin">dict</s
     <span class="token comment"># backbone 所有的 BN 层的均值和方差都直接采用全局预训练值，不进行更新</span>
     norm_eval<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>
     <span class="token comment"># 默认采用 pytorch 模式</span>
-    style<span class="token operator">=</span><span class="token string">'pytorch'</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    style<span class="token operator">=</span><span class="token string">'pytorch'</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h3 id="2-2-Neck"><a href="#2-2-Neck" class="headerlink" title="2.2 Neck"></a>2.2 Neck</h3><p>虽然都采用了 FPN，但是 Faster R-CNN 的配置和 RetinaNet 不同，</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python">neck<span class="token operator">=</span><span class="token builtin">dict</span><span class="token punctuation">(</span>
     <span class="token builtin">type</span><span class="token operator">=</span><span class="token string">'FPN'</span><span class="token punctuation">,</span>
     <span class="token comment"># ResNet 模块输出的4个尺度特征图通道数</span>
     in_channels<span class="token operator">=</span><span class="token punctuation">[</span><span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">512</span><span class="token punctuation">,</span> <span class="token number">1024</span><span class="token punctuation">,</span> <span class="token number">2048</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-     <span class="token comment"># FPN 输出的每个尺度输出特征图通道</span>
+    <span class="token comment"># FPN 输出的每个尺度输出特征图通道</span>
     out_channels<span class="token operator">=</span><span class="token number">256</span><span class="token punctuation">,</span>
     <span class="token comment"># FPN 输出特征图个数</span>
     num_outs<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
@@ -1639,12 +1640,11 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/">
+                <a href="/2022/04/15/docker-gpu/">
                     <div class="card-image">
                         
                         
@@ -1660,9 +1660,9 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-04-12
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-04-15
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -1671,7 +1671,6 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -1855,7 +1854,7 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">34.5k</span>
+                        class="white-color">34.6k</span>
             
             
             
