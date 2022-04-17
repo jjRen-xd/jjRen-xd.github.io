@@ -6,7 +6,7 @@
   <link href="http://jjren-xd.github.io/atom.xml" rel="self"/>
   
   <link href="http://jjren-xd.github.io/"/>
-  <updated>2022-04-15T08:32:47.167Z</updated>
+  <updated>2022-04-17T06:42:15.947Z</updated>
   <id>http://jjren-xd.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://jjren-xd.github.io/2022/04/15/zai-yin-he-qi-lin-gao-ji-fu-wu-qi-cao-zuo-xi-tong-v10-shang-an-zhuang-docker/"/>
     <id>http://jjren-xd.github.io/2022/04/15/zai-yin-he-qi-lin-gao-ji-fu-wu-qi-cao-zuo-xi-tong-v10-shang-an-zhuang-docker/</id>
     <published>2022-04-15T08:32:47.024Z</published>
-    <updated>2022-04-15T08:32:47.167Z</updated>
+    <updated>2022-04-17T06:42:15.947Z</updated>
     
     
       
@@ -38,11 +38,11 @@
   </entry>
   
   <entry>
-    <title></title>
+    <title>轻松掌握 MMDetection 中常用算法(二)：Faster R-CNN|Mask R-CNN</title>
     <link href="http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/"/>
     <id>http://jjren-xd.github.io/2022/04/12/mmdetection-xue-xi-bi-ji-4-gou-jian-faster-r-cnn-ji-pei-zhi/</id>
     <published>2022-04-12T02:13:09.548Z</published>
-    <updated>2022-04-12T04:09:51.589Z</updated>
+    <updated>2022-04-17T06:39:51.363Z</updated>
     
     
       
@@ -59,11 +59,11 @@
   </entry>
   
   <entry>
-    <title></title>
+    <title>轻松掌握 MMDetection 中常用算法(一)：RetinaNet 及配置详解</title>
     <link href="http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-3-gou-jian-retinanet-ji-pei-zhi/"/>
     <id>http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-3-gou-jian-retinanet-ji-pei-zhi/</id>
     <published>2022-04-05T08:01:33.080Z</published>
-    <updated>2022-04-12T02:13:54.079Z</updated>
+    <updated>2022-04-17T06:39:35.979Z</updated>
     
     
       
@@ -80,11 +80,11 @@
   </entry>
   
   <entry>
-    <title></title>
+    <title>轻松掌握 MMDetection 整体构建流程(二)</title>
     <link href="http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/"/>
     <id>http://jjren-xd.github.io/2022/04/05/mmdetection-xue-xi-bi-ji-2-zheng-ti-gou-jian-liu-cheng-dai-ma/</id>
     <published>2022-04-05T06:03:02.122Z</published>
-    <updated>2022-04-11T02:44:57.844Z</updated>
+    <updated>2022-04-17T06:38:59.333Z</updated>
     
     
       
@@ -101,11 +101,11 @@
   </entry>
   
   <entry>
-    <title></title>
+    <title>轻松掌握 MMDetection 整体构建流程(一)</title>
     <link href="http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/"/>
     <id>http://jjren-xd.github.io/2022/04/02/mmdetection-xue-xi-bi-ji-1-zheng-ti-gou-jian-liu-cheng/</id>
     <published>2022-04-02T07:41:51.942Z</published>
-    <updated>2022-04-11T02:40:10.844Z</updated>
+    <updated>2022-04-17T06:38:41.642Z</updated>
     
     
       
@@ -191,6 +191,27 @@
     <category term="tmux" scheme="http://jjren-xd.github.io/tags/tmux/"/>
     
     <category term="远程开发" scheme="http://jjren-xd.github.io/tags/%E8%BF%9C%E7%A8%8B%E5%BC%80%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>docker使用基本说明</title>
+    <link href="http://jjren-xd.github.io/2021/04/17/docker-shi-yong-ji-ben-jiao-cheng/"/>
+    <id>http://jjren-xd.github.io/2021/04/17/docker-shi-yong-ji-ben-jiao-cheng/</id>
+    <published>2021-04-17T05:34:21.000Z</published>
+    <updated>2022-04-17T06:37:54.109Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1 id=&quot;docker使用基本说明&quot;&gt;&lt;a href=&quot;#docker使用基本说明&quot; class=&quot;headerlink&quot; title=&quot;docker使用基本说明&quot;&gt;&lt;/a&gt;docker使用基本说明&lt;/h1&gt;&lt;h2 id=&quot;1-拉取镜像&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
     
   </entry>
   
