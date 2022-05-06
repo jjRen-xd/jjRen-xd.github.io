@@ -553,21 +553,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2022-04-17
+                    2022-04-21
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    7.6k
+                    8.1k
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    31 分
+                    33 分
                 </div>
                 
 
@@ -612,12 +612,12 @@
 <h2 id="2-Faster-R-CNN-代码详解"><a href="#2-Faster-R-CNN-代码详解" class="headerlink" title="2 Faster R-CNN 代码详解"></a>2 Faster R-CNN 代码详解</h2><p>为方便算法与代码的解读，Faster R-CNN 模型整体流程如下所示：</p>
 <p><img src="https://pic1.zhimg.com/80/v2-2ea42c8f593cb15b486025289f35e1b8_720w.jpg" alt="img"></p>
 <ol>
-<li>图片输入到 ResNet 中进行特征提取，输出 4 个特征图，按照特征图从大到小排列，分别是 C2 C3 C4 C5，stride = 4,8,16,32</li>
-<li>4 个特征图输入到 FPN 模块中进行特征融合，输出 5 个通道数相同的特征图,分别是 p2 ~ p6，stride = 4,8,16,32,64</li>
-<li>FPN 输出的 5 个特征图，输入到同一个 RPN 或者说 5 个相同的 RPN 中，每个分支都进行前后景分类和 bbox 回归，然后就可以和 label 计算 loss</li>
-<li>在 5 个 RPN 分支输出的基础上，采用 RPN test 模块输出指定个数的 Region Proposal，将 Region Proposal 按照重映射规则，在对应的 p2 ~ p5 特征图上进行特征提取，注意并没有使用 p6 层特征图，从而得到指定个数例如 2k 个 Region Proposal 特征图</li>
-<li>将 2k 个不同大小的 RoI 区域特征图输入到 RoIAlign 或者 RoIPool 层中进行统一采样，得到指定输出 shape 的 2k 个特征图</li>
-<li>组成 batch 输入到两层 FC 中进行多类别的分类和回归，其 loss 和 RPN 层 loss 相加进行联合训练</li>
+<li>图片输入到 ResNet 中进行<strong>特征提取</strong>，输出 4 个特征图，按照特征图从大到小排列，分别是 C2 C3 C4 C5，stride = 4,8,16,32</li>
+<li>4 个特征图输入到 FPN 模块中进行<strong>特征融合</strong>，输出 5 个通道数相同的特征图,分别是 p2 ~ p6，stride = 4,8,16,32,64</li>
+<li>FPN 输出的 5 个特征图，输入到同一个 RPN 或者说 5 个相同的 RPN 中，每个分支都进行<strong>前后景分类和 bbox 回归</strong>，然后就可以和 label 计算 loss</li>
+<li>在 5 个 RPN 分支输出的基础上，采用 RPN test 模块<strong>输出指定个数的 Region Proposal</strong>，将 Region Proposal 按照重映射规则，在对应的 p2 ~ p5 特征图上进行特征提取，注意并没有使用 p6 层特征图，从而得到指定个数例如 2k 个 Region Proposal 特征图</li>
+<li>将 2k 个不同大小的 RoI 区域<strong>特征图</strong>输入到 RoIAlign 或者 RoIPool 层中进行<strong>统一采样</strong>，得到指定输出 shape 的 2k 个特征图</li>
+<li>组成 batch <strong>输入到两层 FC 中进行多类别的分类和回归，</strong>其 loss 和 RPN 层 loss 相加进行联合训练</li>
 </ol>
 <p>下面将会对每个模块进行详细的分析。值得注意的是，除了 RoI Head 模块外，其他模块在前一篇 RetinaNet 都有介绍，大家也可以作为参考，方便辅助理解。</p>
 <h3 id="2-1-Backbone"><a href="#2-1-Backbone" class="headerlink" title="2.1 Backbone"></a>2.1 Backbone</h3><p><img src="https://pic1.zhimg.com/80/v2-34e9618f1a3e91e31e70f2248255b508_720w.jpg" alt="img"></p>
@@ -1134,10 +1134,15 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
 <p>关于 RoIAlign 和 RoIPool 的源码实现，由于是采用 CUDA 编程，在后续系列中统一进行分析。</p>
 <h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h2><p>本文重点分析了主流的带有 FPN 模块的 Faster R-CNN 算法，对每个组件都进行了详细分析，在此基础上，对其扩展版本 Mask R-CNN 进行了详细描述。通过本系列第一篇 RetinaNet 和 本文第二篇 Faster R-CNN 和 Mask R-CNN的解读，希望大家可以了解：</p>
 <ul>
-<li>掌握 MMDetection 中涉及到的常用配置参数含义</li>
-<li>掌握 MMDetection 框架中两个经典算法 RetinaNet 和 Faster R-CNN</li>
-<li>对 one-stage 和 two-stage 算法有清晰的理解，例如能够理解 two-stage 实际上可以认为是 one-stage + RoI 区域特征提取 + one-stage，对于 Cascade R-CNN 这类算法可以认为是 one-stage + RoI 区域特征提取 + one-stage + RoI 区域特征提取 + one-stage</li>
-<li>RetinaNet 和 Faster R-CNN 解读完后，大家阅读 MMDetection 中大部分算法都会相对容易</li>
+<li><p>掌握 MMDetection 中涉及到的常用配置参数含义</p>
+</li>
+<li><p>掌握 MMDetection 框架中两个经典算法 RetinaNet 和 Faster R-CNN</p>
+</li>
+<li><p>对 one-stage 和 two-stage 算法有清晰的理解，例如能够理解 two-stage 实际上可以认为是 one-stage + RoI 区域特征提取 + one-stage，对于 Cascade R-CNN 这类算法可以认为是 one-stage + RoI 区域特征提取 + one-stage + RoI 区域特征提取 + one-stage</p>
+</li>
+<li><p>RetinaNet 和 Faster R-CNN 解读完后，大家阅读 MMDetection 中大部分算法都会相对容易2.2 MMDetection<br>  使用Pytorch构建一个新算法时，通常包含如下几步：</p>
+<p>注册数据集：CustomDataset是MMDetection在原始的Dataset基础上的再次封装，其__getitem__()方法会根据训练和测试模式分别重定向到prepare_train_img()和prepare_test_img()函数。用户以继承CustomDataset类的方式构建自己的数据集时，需要重写load_annotations()和get_ann_info()函数，定义数据和标签的加载及遍历方式。完成数据集类的定义后，还需要使用DATASETS.register_module()进行模块注册。<br>注册模型：模型构建的方式和Pytorch类似，都是新建一个Module的子类然后重写forward()函数。唯一的区别在于MMDetection中需要继承BaseModule而不是Module，BaseModule是Module的子类，MMLab中的任何模型都必须继承此类。另外，MMDetection将一个完整的模型拆分为backbone、neck和head三部分进行管理，所以用户需要按照这种方式，将算法模型拆解成3个类，分别使用BACKBONES.register_module()、NECKS.register_module()和HEADS.register_module()完成模块注册。<br>构建配置文件：配置文件用于配置算法各个组件的运行参数，大体上可以包含四个部分：datasets、models、schedules和runtime。完成相应模块的定义和注册后，在配置文件中配置好相应的运行参数，然后MMDetection就会通过Registry类读取并解析配置文件，完成模块的实例化。另外，配置文件可以通过_base_字段实现继承功能，以提高代码复用率。<br>训练和验证：在完成各模块的代码实现、模块的注册、配置文件的编写后，就可以使用./tools/train.py和./tools/test.py对模型进行训练和验证，不需要用户编写额外的代码。<br>————————————————<br>版权声明：本文为CSDN博主「Maples丶丶」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16137569/article/details/121316235">https://blog.csdn.net/qq_16137569/article/details/121316235</a></p>
+</li>
 </ul>
 
                 
@@ -1854,7 +1859,7 @@ losses <span class="token operator">=</span> <span class="token builtin">dict</s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">36k</span>
+                        class="white-color">36.6k</span>
             
             
             
